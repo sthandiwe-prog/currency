@@ -4,25 +4,16 @@ import "./App.css";
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [ratesData, setRatesData] = useState({});
-  const [input, setInput] = useState("1");
-  function handleResponse(response) {
-    console.log(response.data.rates);
+  const [input, setInput] = useState();
 
-    setRatesData({
-      base: response.data.base,
-      rates: response.data.rates,
-      date: response.data.date,
-    });
+  function handleResponse(response) {
     setReady(true);
+    console.log(response.data);
   }
 
-  // function handleOnChange(event) {
-  //   console.log(event.target.value);
-  //   setInput(event.target.value);
-  // }
-  function handleOnSubmit(event) {
-    setInput(event.target.value);
+  function handleSubmit(event) {
+    event.preventDefault();
+    setInput(event.target.fromCurrency.value);
   }
 
   if (ready) {
@@ -30,29 +21,40 @@ export default function App() {
       <div className="App">
         <h1>Currency Convertion App</h1>
         <div className="content">
-          <div className="base">
-            <label htmlFor="amount-to-convert">Amount in :</label> <br />
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="currency-to-convert-from">Convert from: </label>{" "}
             <input
               type="text"
-              id="amount-to-convert"
-              // onChange={handleOnChange}
-            />
-          </div>
-          <div className="convert-button">
-            <button className="btn" type="sumbit" onSubmit={handleOnSubmit}>
-              Convert
+              name="fromCurrency"
+              id="currency-to-convert-from"
+              placeholder="EUR"
+            />{" "}
+            <br />
+            <label htmlFor="currency-to-convert-to">To Currency: </label>
+            <input
+              type="text"
+              name="toCurrency"
+              id="currency-to-convert-to"
+              placeholder="AUD"
+            />{" "}
+            <br />
+            <label htmlFor="amount-to-convert">Your amount: </label>
+            <input type="text" id="amount-to-convert" placeholder="234" />
+            <br />
+            <button className="convert-button" type="sumbit">
+              Convert{" "}
             </button>
-          </div>
+          </form>
+
           <div className="converted-amount">
-            <h5>
-              {input} is 1234 {ratesData.base}
-            </h5>
+            <h5>1 {input}equals 3 </h5>
           </div>
         </div>
       </div>
     );
   } else {
-    const apiUrl = `http://data.fixer.io/api/latest?access_key=a3a1b102dbb8df0fb280cebe7c1bf2d9`;
+    const apiKey = `ff680cf3f475393aa78ef456`;
+    const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/EUR/AUD`;
     axios.get(apiUrl).then(handleResponse);
     return <p>Loading...</p>;
   }
